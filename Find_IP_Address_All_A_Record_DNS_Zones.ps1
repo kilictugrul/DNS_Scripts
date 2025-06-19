@@ -9,23 +9,23 @@ $ipAddress="192.168.1.150"
 foreach($zone in $zones.ZoneName)
 {
 
-#zone kayıtlarını export edilecek dizini belirtiyoruz.
-$outputCsv = "D:\Scripts\$($zone)_DNS_A_Records.csv"
+    #zone kayıtlarını export edilecek dizini belirtiyoruz.
+    $outputCsv = "D:\Scripts\$($zone)_DNS_A_Records.csv"
 
-#Tüm A Kayıtlarını Alıyoruz
-$dnsRecords = Get-DnsServerResourceRecord -ComputerName $dnsServer -ZoneName $zone -RRType A
+    #Tüm A Kayıtlarını Alıyoruz
+    $dnsRecords = Get-DnsServerResourceRecord -ComputerName $dnsServer -ZoneName $zone -RRType A
 
-#Ip adresine eşit olanları filtreliyoruz
-$filtered = $ $dnsRecords | Where-Object {$_.RecordData.IPV4Address.IPAddressToString -eq $ipAddress} | Select-Object @{n="ZoneName"; e={$($zone)}},Hostname,@{n="IPAddress"; e={$_.RecordData.IPV4Address.IPAddressToString}}
+    #Ip adresine eşit olanları filtreliyoruz
+    $filtered = $ $dnsRecords | Where-Object {$_.RecordData.IPV4Address.IPAddressToString -eq $ipAddress} | Select-Object @{n="ZoneName"; e={$($zone)}},Hostname,@{n="IPAddress"; e={$_.RecordData.IPV4Address.IPAddressToString}}
 
-#Zone içinde en az 1 kayıt varsa dışarıya export ediyoruz.
-$if ($filtered.Count -gt 0)
-{
-    #CSV' ye yazıyoruz.
-    $filtered | Export-Csv -Path $outputCsv -Encoding UTF8 -NoTypeInformation
+    #Zone içinde en az 1 kayıt varsa dışarıya export ediyoruz.
+    $if ($filtered.Count -gt 0)
+    {
+        #CSV' ye yazıyoruz.
+        $filtered | Export-Csv -Path $outputCsv -Encoding UTF8 -NoTypeInformation
 
-    #Kullanıcıya bilgi veriyoruz.
-    Write-Host "A Kayıtları CSV Dosyasına kaydedildi: $outputCsv"
-}
+        #Kullanıcıya bilgi veriyoruz.
+        Write-Host "A Kayıtları CSV Dosyasına kaydedildi: $outputCsv"
+    }
 
 }
